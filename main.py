@@ -7,4 +7,6 @@ print("Raw TX:\n", tx_to_parse)
 
 p = Parsed_Transaction(tx_to_parse)
 
-print("Parsed TX:\n", json.dumps(p.print_info(), indent=4))
+print("Version", p.version)
+print("Data", p.data)
+# print("Parsed TX:\n", json.dumps(p.print_info(), indent=4))
