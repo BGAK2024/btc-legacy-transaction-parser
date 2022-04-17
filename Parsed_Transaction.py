@@ -22,6 +22,21 @@ class Parsed_Transaction:
       self.data = self.data[num_bytes:]
       return field
 
+
+    # Compact field logic
+    # if the number <= 252 ---> Put 1 byte
+    # if the number is more than 252 than the first byte tells you how many more bytes to read off
+    def compact_field_len(self):
+      n = int(self.pop_bytes(1), 16)
+      
+      if n <= 252:
+        return n
+
+      else:
+        n = 2 ** (n - 252)
+        return n
+      
+
     def parse(self):
       # Version: 4 bytes, little endian
       self.version = int(helpers.flip_endian(self.pop_bytes(4)), 16)
@@ -44,7 +59,7 @@ class Parsed_Transaction:
         # vout: 4 bytes little endian
         vout = int(helpers.flip_endian(self.pop_bytes(4)), 16)
         # scriptSigSize: 1 byte
-        scriptSigSize = int(self.pop_bytes(1), 16)
+        scriptSigSize = self.compact_field_len()
         # scriptSig: scriptSigSize, big endian
         scriptSig = self.pop_bytes(scriptSigSize)
         # sequence: 4 bytes
@@ -69,7 +84,7 @@ class Parsed_Transaction:
         # Amount: 8 bytes little endian
         amount = int(helpers.flip_endian(self.pop_bytes(8)), 16)
         # scriptPubKeySize: 1 byte
-        scriptPubKeySize = int(self.pop_bytes(1), 16)
+        scriptPubKeySize = self.compact_field_len()
         # scriptPubKey: scriptPubKeySize, big endian
         scriptPubKey = self.pop_bytes(scriptPubKeySize)
 
