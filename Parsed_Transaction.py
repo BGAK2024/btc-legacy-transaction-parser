@@ -1,3 +1,4 @@
+import helpers
 
 class Parsed_Transaction:
 
@@ -23,7 +24,7 @@ class Parsed_Transaction:
 
     def parse(self):
       # Version: 4 bytes, little endian
-      self.version = self.pop_bytes(4)
+      self.version = int(helpers.flip_endian(self.pop_bytes(4)), 16)
       # Input count: 1 byte
       self.input_count = int(self.pop_bytes(1), 16)
       # Parse out inputs
@@ -39,14 +40,14 @@ class Parsed_Transaction:
 
       for x in range(num):
         # txid: 32 bytes little endian
-        txid = self.pop_bytes(32)
+        txid = helpers.flip_endian(self.pop_bytes(32))
         # vout: 4 bytes little endian
-        vout = self.pop_bytes(4)
+        vout = int(helpers.flip_endian(self.pop_bytes(4)), 16)
         # scriptSigSize: 1 byte
         scriptSigSize = int(self.pop_bytes(1), 16)
         # scriptSig: scriptSigSize, big endian
         scriptSig = self.pop_bytes(scriptSigSize)
-        # sequence: 4 bytes little endian
+        # sequence: 4 bytes
         sequence = self.pop_bytes(4)
 
         # Create input and append to inputs list
@@ -66,7 +67,7 @@ class Parsed_Transaction:
 
       for x in range(num):
         # Amount: 8 bytes little endian
-        amount = self.pop_bytes(8)
+        amount = int(helpers.flip_endian(self.pop_bytes(8)), 16)
         # scriptPubKeySize: 1 byte
         scriptPubKeySize = int(self.pop_bytes(1), 16)
         # scriptPubKey: scriptPubKeySize, big endian
